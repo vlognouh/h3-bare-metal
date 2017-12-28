@@ -1,30 +1,35 @@
-PROJ_NAME ?= h3_app
+PRJ_NAME ?= h3_app
+PRJ_DIR ?= ../
 
-SRCS = main.c startup.s \
-       Library/SerialPortLib/SerialPortLib.c
+SRCS = main.c h3_startup.S \
+       ../../Libraries/Peripherals/src/SerialPortLib.c \
+       ../../Libraries/Peripherals/src/TimerLib.c
 
-CC=arm-linux-gnueabihf-gcc
-LD=arm-linux-gnueabihf-ld
-OBJCOPY=arm-linux-gnueabihf-objcopy
+CC=arm-none-eabi-gcc
+LD=arm-none-eabi-ld
+OBJCOPY=arm-none-eabi-objcopy
 
 OBJDIR = build
 
 OBJS := $(SRCS:.c=.o)
 OBJS := $(OBJS:.s=.o)
+OBJS := $(OBJS:.S=.o)
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
-LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PROJ_NAME).map -g -T h3.lds
-CFLAGS  = -g -Wall -Wno-missing-braces -std=c99 -IInclude -marm -shared
+CFLAGS  = -g -Wno-missing-braces -Wall -std=c11 -marm -I $(PRJ_DIR)/Libraries/Peripherals/inc
 
-all: $(OBJDIR)/$(PROJ_NAME).elf $(OBJDIR)/$(PROJ_NAME).hex $(OBJDIR)/$(PROJ_NAME).bin $(OBJDIR)/$(PROJ_NAME)_spl.bin
+LDFILE = h3_dram.ld
+LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections
 
-$(OBJDIR)/$(PROJ_NAME)_spl.bin: $(OBJDIR)/$(PROJ_NAME).elf
-	cat u-boot-spl.bin $(OBJDIR)/$(PROJ_NAME).bin > $@
+all: $(OBJDIR)/$(PRJ_NAME).elf $(OBJDIR)/$(PRJ_NAME).hex $(OBJDIR)/$(PRJ_NAME).bin $(OBJDIR)/$(PRJ_NAME)_spl.bin
+
+$(OBJDIR)/$(PRJ_NAME)_spl.bin: $(OBJDIR)/$(PRJ_NAME).elf
+	cat u-boot-spl.bin $(OBJDIR)/$(PRJ_NAME).bin > $@
 
 $(OBJDIR)/%.elf: $(OBJS)
-	#$(CC) -o $@ $^ $(LDFLAGS)
-	${LD} -T h3.lds -o $@ $^ -Map=$(OBJDIR)/$(PROJ_NAME).map
+	#${LD} -T $(LDFILE) -o $@ $^ -Map=$(OBJDIR)/$(PRJ_NAME).map $(LDFLAGS2) 
 	#${OBJCOPY} -I elf32-littlearm -O binary testapp testapp.bin
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDFLAGS2)
 
 %.hex: %.elf
 	$(OBJCOPY) -O ihex $^ $@
@@ -46,4 +51,4 @@ clean:
 	rm -rf $(OBJDIR)/*.bin $(OBJDIR)/*
 
 # Dependdencies
-$(OBJDIR)/$(PROJ_NAME).elf: $(OBJS) | $(OBJDIR)
+$(OBJDIR)/$(PRJ_NAME).elf: $(OBJS) | $(OBJDIR)
