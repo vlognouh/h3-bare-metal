@@ -1,7 +1,7 @@
 PRJ_NAME ?= h3_app
 PRJ_DIR ?= ../
 
-SRCS = main.c h3_startup.S \
+SRCS = main.c syscall.c h3_startup.S \
        ../../Libraries/Peripherals/src/SerialPortLib.c \
        ../../Libraries/Peripherals/src/TimerLib.c
 

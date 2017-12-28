@@ -20,60 +20,8 @@
 #include "Library/SpiLib.h"
 
 /**
-  * @brief  Definition
-  */
-#undef errno
-extern int errno;
-#define STACK_BUFFER 65536 /* Reserved stack space in bytes. */
-
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
-void *_sbrk (int nbytes)
-{
-    /* Symbol defined by linker map */
-    extern int end; /* start of free memory (as symbol) */
-    extern int HeapLimit; /* end of free memory */
-
-    /* The statically held previous end of the heap, with its initialization. */
-    static void *heap_ptr = (void *)&end; /* Previous end */
-    static void *limit = (void *)&HeapLimit;
-
-    if ((limit - (heap_ptr + nbytes)) > STACK_BUFFER )
-    {
-        void *base = heap_ptr;
-        heap_ptr += nbytes;
-        return base;
-    }
-    else
-    {
-        errno = ENOMEM;
-        printf("=> ENOMEM\r\n");
-        return (void *) - 1;
-    }
-} /* _sbrk () */
-
-/*-------------------- SYSCALL DEFINITION ------------------*/
-int _write (int file,
-            char *buf,
-            int nbytes)
-{
-    int i;
-    SerialPortWrite((uint8_t *)buf, nbytes);
-    return nbytes;
-} /* _write () */
-
-int _read(int file) { return -1; }
-int _close(int file) { return -1; }
-int _fstat(int file) { return -1; }
-int _isatty(int file) { return 1; }
-int _lseek(int file, int ptr, int dir) { return 0; }
-
-
-/** MAIN FUNC 
-*******************/
+ * MAIN FUNC
+ */
 int main(int argc, char const *argv[])
 {
     uint Temp;
@@ -86,21 +34,31 @@ int main(int argc, char const *argv[])
     // extern int end;
     // extern int HeapLimit;
     char Text[25];
-    WriteReg(GPIO_BASE, PA_CONFIG1_OFFSET, ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET) & (~(6 << 28)));
-    WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) | (1 << 15));
-    for (i = 1000; i > 0; i--);
+    Temp = ReadReg(CCU_BASE, BUS_CLK_GATING_REG2);
+    printf("=== BUS_CLK_GATING_REG2 : %x\r\n", Temp);
+
+    /* Configure PA10 as output */
+    WriteReg(GPIO_BASE, PA_CONFIG1_OFFSET, ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET) & (~(6 << 8)));
+
+    /* Set PA10 */
+    WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) | (1 << 10));
+
+    /* Set PL Clock gating in APB0_CLKGATE register */
     WriteReg(APB0_CLKGATE, 0, 3);
 
+    /* Configure PL10 as output */
     WriteReg(PL_BASE, PL_CONFIG1_OFFSET, ReadReg(PL_BASE, PL_CONFIG1_OFFSET) & (~(6 << 8)));
-    WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) | (1 << 10));
-    char *s = "Hello  Everyone 24!!\r\n";
+
+    /* Set PL10 */
+    WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
+    char *s = "Hello  Everyone 26!!\r\n";
     SerialPortWrite((uint8_t *)s, strlen(s));
     // printf("=> end 0x%p\r\n", &end);
     // printf("=> limit 0x%p\r\n", &HeapLimit);
     pa = malloc(200);
     pb = malloc(100);
-    printf("==== printf Worked: %x\r\n", pa);
-    printf("==== printf Worked: %x\r\n", pb);
+    printf("==== printf Worked: 0x%p\r\n", pa);
+    printf("==== printf Worked: 0x%p\r\n", pb);
     Timer0Init();
     free(pa);
 //    WriteReg(CCU_BASE, PLL_PERIPH0, 1<<31 | 5<<8 | 2<<4 | 2);
