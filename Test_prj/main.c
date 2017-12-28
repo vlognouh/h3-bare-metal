@@ -56,7 +56,7 @@ void *_sbrk (int nbytes)
 } /* _sbrk () */
 
 /*-------------------- SYSCALL DEFINITION ------------------*/
-int fwrite (int file,
+int _write (int file,
             char *buf,
             int nbytes)
 {
