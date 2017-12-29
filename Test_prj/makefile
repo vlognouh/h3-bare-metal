@@ -3,8 +3,8 @@ PRJ_DIR ?= ../
 
 SRCS = main.c syscall.c h3_startup.S \
        ../../Libraries/Peripherals/src/SerialPortLib.c \
-       ../../Libraries/Peripherals/src/TimerLib.c
-
+       ../../Libraries/Peripherals/src/TimerLib.c \
+       ../../Libraries/Peripherals/src/GicLib.c
 CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld
 OBJCOPY=arm-none-eabi-objcopy
