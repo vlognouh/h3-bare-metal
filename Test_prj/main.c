@@ -18,6 +18,8 @@
 #include "Library/CcuLib.h"
 #include "Library/I2cLib.h"
 #include "Library/SpiLib.h"
+#include "Library/GicLib.h"
+
 
 /**
  * MAIN FUNC
@@ -51,33 +53,32 @@ int main(int argc, char const *argv[])
 
     /* Set PL10 */
     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
-    char *s = "Hello  Everyone 26!!\r\n";
-    SerialPortWrite((uint8_t *)s, strlen(s));
-    // printf("=> end 0x%p\r\n", &end);
-    // printf("=> limit 0x%p\r\n", &HeapLimit);
+
+    printf("Hello Everyone 27!!\r\n");
+
     pa = malloc(200);
     pb = malloc(100);
     printf("==== printf Worked: 0x%p\r\n", pa);
     printf("==== printf Worked: 0x%p\r\n", pb);
-    Timer0Init();
+
+    GicInit();
+
     free(pa);
 //    WriteReg(CCU_BASE, PLL_PERIPH0, 1<<31 | 5<<8 | 2<<4 | 2);
 //    while (!(ReadReg(CCU_BASE, PLL_PERIPH0) & 1<<28));
     Temp = ReadReg(CCU_BASE, PLL_PERIPH0);
-    sprintf(Text, "--- PLL0= 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("--- PLL0= 0x%x\r\n", Temp);
 
 //    WriteReg(CCU_BASE, PLL_PERIPH1, 1<<31 | 5<<8 | 2<<4 | 2);
 //    while (!(ReadReg(CCU_BASE, PLL_PERIPH1) & 1<<28));
     Temp = ReadReg(CCU_BASE, PLL_PERIPH1);
-    sprintf(Text, "--- PLL1= 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("--- PLL1= 0x%x\r\n", Temp);
 
 //    WriteReg(CCU_BASE, AHB1_APB1_CFG_REG, 2<<12 | 2<<8 | 2<<6);
     Temp = ReadReg(CCU_BASE, AHB1_APB1_CFG_REG);
-    sprintf(Text, "--- AHB1= 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("--- AHB1= 0x%x\r\n", Temp);
 
+    Timer0Init();
 ////// I2C
 #if 0
     I2cInitialize(0);
@@ -151,5 +152,11 @@ void test_fi(void)
 
 void test_ir(void)
 {
-    SerialPortWrite((uint8_t *)"I\r\n", 3);
+    printf("IRQ Interrupttr\r\n");
+
+    /* Clear active interrupt */
+    WriteReg(GICD_BASE, GICD_ICPENDR_1, 1 << 18);
+    //WriteReg(GICD_BASE, GICD_ICPENDR1, 1<<18);
+
+    return;
 }

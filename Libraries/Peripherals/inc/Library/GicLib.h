@@ -8,6 +8,9 @@
 #define GICD_ICENABLER_1    0x184
 #define GICD_IPRIORITYR_12  0x430
 #define GICD_ITARGETSR_12   0x830
+#define GICD_ICACTIVER_1    0x384
+#define GICD_ICPENDR_1      0x284
+
 #define GICD_ICFGR_3        0xC0C
 #define GICD_SPISR_2        0xD08
 
@@ -195,5 +198,7 @@ static inline void GIC_SetInterfacePriorityMask(uint32_t priority)
 
 void GIC_DistInit(void);
 void GIC_CPUInterfaceInit(void);
+
+void GicInit(void);
 
 #endif /* __GICLIB_H__ */
