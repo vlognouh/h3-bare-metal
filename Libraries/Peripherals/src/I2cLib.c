@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "helper.h"
-#include "Library/I2cLib.h"
-#include "Library/SerialPortLib.h"
-#include "Library/CcuLib.h"
-#include "Library/GpioLib.h"
+#include "I2cLib.h"
+#include "SerialPortLib.h"
+#include "CcuLib.h"
+#include "GpioLib.h"
 
 void I2cGenerateStart(void)
 {

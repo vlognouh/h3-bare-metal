@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "helper.h"
-#include "Library/CcuLib.h"
-#include "Library/SpiLib.h"
-#include "Library/GpioLib.h"
-#include "Library/SerialPortLib.h"
+#include "CcuLib.h"
+#include "SpiLib.h"
+#include "GpioLib.h"
+#include "SerialPortLib.h"
 
 #define LEN 1
 uint32_t Temp;

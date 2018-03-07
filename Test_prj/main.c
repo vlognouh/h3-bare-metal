@@ -12,13 +12,13 @@
 
 #include "helper.h"
 
-#include "Library/SerialPortLib.h"
-#include "Library/TimerLib.h"
-#include "Library/GpioLib.h"
-#include "Library/CcuLib.h"
-#include "Library/I2cLib.h"
-#include "Library/SpiLib.h"
-#include "Library/GicLib.h"
+#include "SerialPortLib.h"
+#include "TimerLib.h"
+#include "GpioLib.h"
+#include "CcuLib.h"
+#include "I2cLib.h"
+#include "SpiLib.h"
+#include "GicLib.h"
 
 
 /**
@@ -43,7 +43,10 @@ int main(int argc, char const *argv[])
     WriteReg(GPIO_BASE, PA_CONFIG1_OFFSET, ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET) & (~(6 << 8)));
 
     /* Set PA10 */
-    WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) | (1 << 10));
+    //WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) | (1 << 10));
+
+    /* Clear PA10 */
+    WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) & ~(1 << 10));
 
     /* Set PL Clock gating in APB0_CLKGATE register */
     WriteReg(APB0_CLKGATE, 0, 3);
@@ -51,10 +54,10 @@ int main(int argc, char const *argv[])
     /* Configure PL10 as output */
     WriteReg(PL_BASE, PL_CONFIG1_OFFSET, ReadReg(PL_BASE, PL_CONFIG1_OFFSET) & (~(6 << 8)));
 
-    /* Set PL10 */
+    /* clear PL10 */
     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
 
-    printf("Hello Everyone 27!!\r\n");
+    printf("Hello Everyone 28  !!\r\n");
 
     pa = malloc(200);
     pb = malloc(100);
@@ -117,10 +120,10 @@ int main(int argc, char const *argv[])
     while (1)
     {
         i = ReadReg(TIMER_BASE, TMR0_CUR_VALUE_REG_OFFSET);
-        if (i == 0x2DC00)
-            WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) | (1 << 10));
-        if (i == 0x50000)
-            WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) & ~(1 << 10));
+        if (i % 10000 == 0)
+            WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) ^ (1 << 10));
+        // if (i = 0x55555)
+        //     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
     }
     return 0;
 }
@@ -152,11 +155,33 @@ void test_fi(void)
 
 void test_ir(void)
 {
-    printf("IRQ Interrupttr\r\n");
+    uint32_t val;
+
+    SerialPortWrite((uint8_t *)"I\r\n", 3);
+    // val = ReadReg(GICC_BASE, GICC_IAR);
+    // printf("IRQ IAR : 0x%x\r\n", val);
 
     /* Clear active interrupt */
-    WriteReg(GICD_BASE, GICD_ICPENDR_1, 1 << 18);
-    //WriteReg(GICD_BASE, GICD_ICPENDR1, 1<<18);
+    val = ReadReg(GICD_BASE, GICD_ICPENDR_1);
+    printf("IRQ IC pending : 0x%x\r\n", val);
 
-    return;
+    val = ReadReg(GICD_BASE, GICD_ICACTIVER_1);
+    printf("IRQ IC active : 0x%x\r\n", val);
+
+    // WriteReg(GICD_BASE, GICD_ICPENDR_1, 0xFFFFFFFF);
+
+    /*
+     * clear Timer pending
+     */
+    WriteReg(TIMER_BASE, TMR_IRQ_STA_REG_OFFSET, 1);
+    WriteReg(GPIO_BASE, PA_DATA_OFFSET, ReadReg(GPIO_BASE, PA_DATA_OFFSET) ^ (1 << 10));
+    // WriteReg(GICD_BASE, GICD_ICACTIVER_1, 0xFFFFFFFF);
+
+    val = ReadReg(GICD_BASE, GICD_ICPENDR_1);
+    printf("IRQ IC pending : 0x%x\r\n", val);
+
+    // val = ReadReg(GICD_BASE, GICD_ICACTIVER_1);
+    // printf("IRQ IC active : 0x%x\r\n", val);
+
+    // WriteReg(GICC_BASE, GICC_EOIR, 0x32);
 }

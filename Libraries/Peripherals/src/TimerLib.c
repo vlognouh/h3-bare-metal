@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "Library/TimerLib.h"
-#include "Library/SerialPortLib.h"
-#include "Library/GpioLib.h"
-#include "Library/GicLib.h"
+#include "TimerLib.h"
+#include "SerialPortLib.h"
+#include "GpioLib.h"
+#include "GicLib.h"
 #include "helper.h"
 
 void

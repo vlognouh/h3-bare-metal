@@ -5,7 +5,7 @@
  **/
 
 #include <stdint.h>
-#include "Library/SerialPortLib.h"
+#include "SerialPortLib.h"
 
 struct NS16550 *com_port = (struct NS16550 *)UART0_BASE;
 uint8_t baud_divisor = 13;  // 115200

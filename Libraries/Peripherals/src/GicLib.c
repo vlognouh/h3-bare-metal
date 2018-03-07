@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "helper.h"
-#include "Library/GicLib.h"
+#include "GicLib.h"
 
 
 
