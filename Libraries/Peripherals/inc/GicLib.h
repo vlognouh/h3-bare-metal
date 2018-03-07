@@ -8,8 +8,8 @@
 #define GICD_ICENABLER_1    0x184
 #define GICD_IPRIORITYR_12  0x430
 #define GICD_ITARGETSR_12   0x830
-#define GICD_ICACTIVER_1    0x384
 #define GICD_ICPENDR_1      0x284
+#define GICD_ICACTIVER_1    0x384
 
 #define GICD_ICFGR_3        0xC0C
 #define GICD_SPISR_2        0xD08
@@ -18,6 +18,8 @@
 #define GICC_CTLR           0x000
 #define GICC_PMR            0x004
 #define GICC_BPR            0x008
+#define GICC_IAR            0x000C
+#define GICC_EOIR           0x0010
 
 typedef struct
 {

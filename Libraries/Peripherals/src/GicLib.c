@@ -1,11 +1,12 @@
-#include "stdio.h"
-#include "Library/GicLib.h"
+#include <stdio.h>
 #include "helper.h"
+#include "Library/GicLib.h"
+
 
 
 void GicInit(void)
 {
-	uint priority_field;
+	uint32_t priority_field;
 
     /** GIC setup
       */

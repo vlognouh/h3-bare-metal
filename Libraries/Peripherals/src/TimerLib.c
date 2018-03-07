@@ -19,7 +19,7 @@ Timer0Init (
 {
     /** Timer0 config
       */
-    WriteReg(TIMER_BASE, TMR0_INTV_VALUE_REG_OFFSET, 0xa0000); //interval 1s
+    WriteReg(TIMER_BASE, TMR0_INTV_VALUE_REG_OFFSET, 0xA0000); //interval 1s
     WriteReg(TIMER_BASE, TMR0_CTRL_REG_OFFSET, 0x74); // clock from 24Mhz, prescaler 128
     //reload timer
     WriteReg(TIMER_BASE, TMR0_CTRL_REG_OFFSET, ReadReg(TIMER_BASE, TMR0_CTRL_REG_OFFSET) |(1<<1));
