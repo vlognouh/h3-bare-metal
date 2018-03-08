@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "SerialPortLib.h"
+#include "Periph/SerialPortLib.h"
 
 /**
   * @brief  Definition

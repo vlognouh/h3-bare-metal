@@ -23,12 +23,14 @@ PERIPH_LIB := y
 ifeq ($(PERIPH_LIB),y)
 include $(LIB_DIR)/Libraries/Libraries.mk
 OBJS += $(addprefix $(OBJDIR)/Libraries/,$(periph-y))
+CFLAGS += -I ${LIB_DIR}/Libraries/Include/
 endif
 
 
-# -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -mcpu=cortex-a7 
+# Cortex A7: -mfloat-abi=softfp -mfpu=vfpv4-d16 -mcpu=cortex-a7
 
-CFLAGS  = -g -Wall -std=c11 -marm -I $(LIB_DIR)/Libraries/Include -I ${LIB_DIR}/Libraries/Include/Periph
+CFLAGS += -mfloat-abi=softfp -mfpu=vfpv4-d16 
+CFLAGS += -g -Wall -std=c11 -mcpu=cortex-a7 -marm
 
 LDFILE = h3_dram.ld
 LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections
@@ -40,7 +42,7 @@ $(OBJDIR)/$(PRJ_NAME)_spl.bin: $(OBJDIR)/$(PRJ_NAME).elf
 
 $(OBJDIR)/%.elf: $(OBJS)
 	@echo "   [LD]  	$@"
-	@$(CC) -o $@ $^ $(LDFLAGS) $(LDFLAGS2)
+	@$(CC) -o $@ $^ $(LDFLAGS)
 
 %.hex: %.elf
 	@echo "   [OBJCOPY]	$@"

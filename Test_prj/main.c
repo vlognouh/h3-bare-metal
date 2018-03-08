@@ -10,7 +10,7 @@
 #include <stdarg.h>
 #include <errno.h>
 
-#include "helper.h"
+#include "Periph/helper.h"
 
 #include "Periph/SerialPortLib.h"
 #include "Periph/TimerLib.h"

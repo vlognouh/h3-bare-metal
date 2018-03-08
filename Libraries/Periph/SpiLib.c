@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "helper.h"
+#include "Periph/helper.h"
 #include "Periph/CcuLib.h"
 #include "Periph/SpiLib.h"
 #include "Periph/GpioLib.h"

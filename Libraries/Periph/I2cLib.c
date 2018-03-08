@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "helper.h"
+#include "Periph/helper.h"
 #include "Periph/I2cLib.h"
 #include "Periph/SerialPortLib.h"
 #include "Periph/CcuLib.h"
