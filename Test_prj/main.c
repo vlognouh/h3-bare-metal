@@ -26,7 +26,7 @@
  */
 int main(int argc, char const *argv[])
 {
-    uint Temp;
+    uint32_t Temp;
     uint8_t value;
     uint8_t data[2];
     uint32_t i;
@@ -35,9 +35,9 @@ int main(int argc, char const *argv[])
 
     // extern int end;
     // extern int HeapLimit;
-    char Text[25];
+
     Temp = ReadReg(CCU_BASE, BUS_CLK_GATING_REG2);
-    printf("=== BUS_CLK_GATING_REG2 : %x\r\n", Temp);
+    printf("=== BUS_CLK_GATING_REG2 : %lx\r\n", Temp);
 
     /* Configure PA10 as output */
     WriteReg(GPIO_BASE, PA_CONFIG1_OFFSET, ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET) & (~(6 << 8)));
@@ -70,52 +70,47 @@ int main(int argc, char const *argv[])
 //    WriteReg(CCU_BASE, PLL_PERIPH0, 1<<31 | 5<<8 | 2<<4 | 2);
 //    while (!(ReadReg(CCU_BASE, PLL_PERIPH0) & 1<<28));
     Temp = ReadReg(CCU_BASE, PLL_PERIPH0);
-    printf("--- PLL0= 0x%x\r\n", Temp);
+    printf("--- PLL0= 0x%lx\r\n", Temp);
 
 //    WriteReg(CCU_BASE, PLL_PERIPH1, 1<<31 | 5<<8 | 2<<4 | 2);
 //    while (!(ReadReg(CCU_BASE, PLL_PERIPH1) & 1<<28));
     Temp = ReadReg(CCU_BASE, PLL_PERIPH1);
-    printf("--- PLL1= 0x%x\r\n", Temp);
+    printf("--- PLL1= 0x%lx\r\n", Temp);
 
 //    WriteReg(CCU_BASE, AHB1_APB1_CFG_REG, 2<<12 | 2<<8 | 2<<6);
     Temp = ReadReg(CCU_BASE, AHB1_APB1_CFG_REG);
-    printf("--- AHB1= 0x%x\r\n", Temp);
+    printf("--- AHB1= 0x%lx\r\n", Temp);
 
     Timer0Init();
 ////// I2C
 #if 0
     I2cInitialize(0);
     I2cRead(0xD0, 0x75, data, 1);
-    sprintf(Text, "Who I Am = %d\r\n", data[0]);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("Who I Am = %d\r\n", data[0]);
+
     data[0] = 0x23;
     I2cWrite(0xD0, 0x6B, data, 1);
 
     I2cRead(0xD0, 0x6B, data, 1);
-    sprintf(Text, "MPU6050 Addr:0x6B = %d\r\n", data[0]);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("MPU6050 Addr:0x6B = %d\r\n", data[0]);
 #endif
 #if 0
 ////// SPI
     SPI0_Init();
     Dummy_Byte(); // => to correct SPI_SCK polarity
     value = Transfer_One(0x00);
-    sprintf(Text, "SPI Reg 0x0? = 0x%x\r\n", value);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("SPI Reg 0x0? = 0x%x\r\n", value);
 
     value = Transfer_One(0x01);
-    sprintf(Text, "SPI Reg 0x1? = 0x%x\r\n", value);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("SPI Reg 0x1? = 0x%x\r\n", value);
 
     value = Transfer_One(0x02);
-    sprintf(Text, "SPI Reg 0x2? = 0x%x\r\n", value);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("SPI Reg 0x2? = 0x%x\r\n", value);
 
     // Print APB2 Config Register
     SerialPortWrite((uint8_t *)"---\r\n", 5);
-    Temp = ReaadReg(CCU_BASE, APB2_CFG_REG);
-    sprintf(Text, "APB2 Reg = 0x%x\r\n", Temp);
-    SerialPortWrite(Text, strlen(Text));
+    Temp = ReadReg(CCU_BASE, APB2_CFG_REG);
+    printf("APB2 Reg = 0x%lx\r\n", Temp);
 #endif
     while (1)
     {
@@ -163,10 +158,10 @@ void test_ir(void)
 
     /* Clear active interrupt */
     val = ReadReg(GICD_BASE, GICD_ICPENDR_1);
-    printf("IRQ IC pending : 0x%x\r\n", val);
+    printf("IRQ IC pending : 0x%lx\r\n", val);
 
     val = ReadReg(GICD_BASE, GICD_ICACTIVER_1);
-    printf("IRQ IC active : 0x%x\r\n", val);
+    printf("IRQ IC active : 0x%lx\r\n", val);
 
     // WriteReg(GICD_BASE, GICD_ICPENDR_1, 0xFFFFFFFF);
 
@@ -178,8 +173,7 @@ void test_ir(void)
     // WriteReg(GICD_BASE, GICD_ICACTIVER_1, 0xFFFFFFFF);
 
     val = ReadReg(GICD_BASE, GICD_ICPENDR_1);
-    printf("IRQ IC pending : 0x%x\r\n", val);
-
+    printf("IRQ IC pending : 0x%lx\r\n", val);
     // val = ReadReg(GICD_BASE, GICD_ICACTIVER_1);
     // printf("IRQ IC active : 0x%x\r\n", val);
 

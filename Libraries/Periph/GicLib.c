@@ -12,7 +12,7 @@ void GicInit(void)
       */
     GIC_SetPriority((IRQn_Type)0, 0xff);
     priority_field = GIC_GetPriority((IRQn_Type)0);
-    printf("priority implemented = 0x%x\r\n", priority_field);
+    printf("priority implemented = 0x%lx\r\n", priority_field);
 
 #if 1
     /* Setup GIC CPU interface, these reg is banked for each cpu */

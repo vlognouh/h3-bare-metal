@@ -155,8 +155,7 @@ uint8_t Transfer_One(uint8_t Addr)
 
     // Count TX FIFO
     Temp = ReadReg(SPI0_BASE, SPI_FIFO_STA)>>16 & 0xFF;
-    sprintf(Text, "--- TX COUNT= 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf(Text, "--- TX COUNT= 0x%x\r\n", Temp);
 
     // Enable interrupt
     WriteReg(SPI0_BASE, SPI_INT_CTL, 1 << 12);
@@ -173,13 +172,11 @@ uint8_t Transfer_One(uint8_t Addr)
 
     // Count RX FIFO
     Temp = ReadByte(SPI0_BASE, SPI_FIFO_STA);
-    sprintf(Text, "--- RX COUNT= 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("--- RX COUNT= 0x%lx\r\n", Temp);
 
     // Read RX FIFO
     Data = ReadByte(SPI0_BASE, SPI_RXDATA);
-    sprintf(Text, "--- RX DATA= 0x%x\r\n", Data);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("--- RX DATA= 0x%x\r\n", Data);
 
     Data = ReadByte(SPI0_BASE, SPI_RXDATA);
 
@@ -209,8 +206,8 @@ uint8_t SPI0_Read_Byte(uint8_t Address)
 
     // Count TX FIFO
 //    Temp = ReadReg(SPI0_BASE, SPI_FIFO_STA)>>16 & 0xFF;
-//    sprintf(Text, "--- TX COUNT= 0x%x\r\n", Temp);
-//    SerialPortWrite((uint8_t *)Text, strlen(Text));
+//    printf("--- TX COUNT= 0x%x\r\n", Temp);
+
 
     // Transmit
     Temp = ReadReg(SPI0_BASE, SPI_TFR_CTL);
@@ -221,8 +218,7 @@ uint8_t SPI0_Read_Byte(uint8_t Address)
 
     // Count RX FIFO
 //    Temp = ReadByte(SPI0_BASE, SPI_FIFO_STA);
-//    sprintf(Text, "--- RX COUNT= 0x%x\r\n", Temp);
-//    SerialPortWrite((uint8_t *)Text, strlen(Text));
+//    printf("--- RX COUNT= 0x%x\r\n", Temp);
     delay();
     return ReadByte(SPI0_BASE, SPI_RXDATA);
 }

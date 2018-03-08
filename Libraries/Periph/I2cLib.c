@@ -43,15 +43,13 @@ uint8_t I2cCheckStatus(void)
 void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
 {
     uint Temp;
-    char Text[30];
 
     /* Start */
 //    I2cGenerateStart();
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_A_ACK | TWI_CNTR_M_START);
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Start Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Start Sent, Status 0x%x\r\n", Temp);
 
     /* Send Address + Write CMD */
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, chip_addr);
@@ -59,8 +57,7 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> ADDR+WR Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> ADDR+WR Sent, Status 0x%x\r\n", Temp);
 
     /* Write Reg Address */
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, reg_addr);
@@ -68,8 +65,7 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Reg ADDR Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Reg ADDR Sent, Status 0x%x\r\n", Temp);
 
     // Write Reg Data
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, data[0]);
@@ -77,14 +73,12 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Reg Data Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Reg Data Sent, Status 0x%x\r\n", Temp);
 
     // Stop
     I2cGenerateStop();
     I2cClearFlag();
-    sprintf(Text, "==> STOP\r\n");
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> STOP\r\n");
 }
 
 void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
@@ -97,8 +91,7 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_A_ACK | TWI_CNTR_M_START);
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Start Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Start Sent, Status 0x%x\r\n", Temp);
 
     // Send Address + Write CMD
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, chip_addr);
@@ -106,8 +99,7 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> ADDR+WR Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> ADDR+WR Sent, Status 0x%x\r\n", Temp);
 
     // Write Reg Address
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, reg_addr);
@@ -115,8 +107,7 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Reg ADDR Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Reg ADDR Sent, Status 0x%x\r\n", Temp);
 
     // Restart
 //    I2cGenerateStart();
@@ -124,8 +115,7 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Restart Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf(Text, "==> Restart Sent, Status 0x%x\r\n", Temp);
 
     // Send Address + Read CMD
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, chip_addr | 1);
@@ -133,8 +123,7 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Address+RE Sent, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Address+RE Sent, Status 0x%x\r\n", Temp);
 
     // Continue
     Temp = ReadReg(TWI0_BASE, TWI_CNTR_OFFSET);
@@ -142,48 +131,41 @@ void I2cRead(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     I2cClearFlag();
     while (!I2cCheckFlag());
     Temp = I2cCheckStatus();
-    sprintf(Text, "==> Continue, Status 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> Continue, Status 0x%x\r\n", Temp);
 
     data[0] = ReadReg(TWI0_BASE, TWI_DATA_OFFSET);
     I2cGenerateStop();
     I2cClearFlag();
-    sprintf(Text, "==> STOP\r\n");
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("==> STOP\r\n");
 }
 
 void I2cInitialize(uint8_t I2cBus)
 {
     uint Temp;
-    char Text[25];
 
     // De-assert TWI reset
     Temp = ReadReg(CCU_BASE, BUS_SW_RESET_REG4);
     WriteReg(CCU_BASE, BUS_SW_RESET_REG4, Temp | 1);
 
-    sprintf(Text, "BUS SW RESET REG 4: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("BUS SW RESET REG 4: 0x%x\r\n", Temp);
 
     // Setup Pin Mux
     Temp = ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET);
     WriteReg(GPIO_BASE, PA_CONFIG1_OFFSET, ((((Temp & ~(7<<12)) & ~(7<<16)) | 2<<12) | 2<<16));
 
     Temp = ReadReg(GPIO_BASE, PA_CONFIG1_OFFSET);
-    sprintf(Text, "GPIO PA CONFIG: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("GPIO PA CONFIG: 0x%x\r\n", Temp);
 
     // check bus clock setting
     Temp = ReadReg(CCU_BASE, APB2_CFG_REG);
-    sprintf(Text, "APB2: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("APB2: 0x%x\r\n", Temp);
 
     // Enable TWI0 clock gating
     Temp = ReadReg(CCU_BASE, BUS_CLK_GATING_REG3);
     WriteReg(CCU_BASE, BUS_CLK_GATING_REG3, Temp | TWI0_GATING);
 
     Temp = ReadReg(CCU_BASE, BUS_CLK_GATING_REG3);
-    sprintf(Text, "CLK GATING REG3: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("CLK GATING REG3: 0x%x\r\n", Temp);
 
 ///////////////
 
@@ -195,8 +177,7 @@ void I2cInitialize(uint8_t I2cBus)
     WriteReg(TWI0_BASE, TWI_CCR_OFFSET, 0x59);
 
     Temp = ReadReg(TWI0_BASE, TWI_CCR_OFFSET);
-    sprintf(Text, "TWI CCR CFG: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("TWI CCR CFG: 0x%x\r\n", Temp);
 
     // Clear slave address
     WriteReg(TWI0_BASE, TWI_ADDR_OFFSET, 0);
@@ -206,6 +187,5 @@ void I2cInitialize(uint8_t I2cBus)
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_M_STOP);
 
     Temp = ReadReg(TWI0_BASE, TWI_CNTR_OFFSET);
-    sprintf(Text, "TWI ENABLE BUS: 0x%x\r\n", Temp);
-    SerialPortWrite((uint8_t *)Text, strlen(Text));
+    printf("TWI ENABLE BUS: 0x%x\r\n", Temp);
 }
