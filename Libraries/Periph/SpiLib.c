@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "helper.h"
-#include "Library/CcuLib.h"
-#include "Library/SpiLib.h"
-#include "Library/GpioLib.h"
-#include "Library/SerialPortLib.h"
+#include "Periph/helper.h"
+#include "Periph/CcuLib.h"
+#include "Periph/SpiLib.h"
+#include "Periph/GpioLib.h"
+#include "Periph/SerialPortLib.h"
 
 #define LEN 1
 uint32_t Temp;

@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "helper.h"
-#include "Library/I2cLib.h"
-#include "Library/SerialPortLib.h"
-#include "Library/CcuLib.h"
-#include "Library/GpioLib.h"
+#include "Periph/helper.h"
+#include "Periph/I2cLib.h"
+#include "Periph/SerialPortLib.h"
+#include "Periph/CcuLib.h"
+#include "Periph/GpioLib.h"
 
 void I2cGenerateStart(void)
 {
@@ -45,7 +45,7 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     uint Temp;
     char Text[30];
 
-    // Start
+    /* Start */
 //    I2cGenerateStart();
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_A_ACK | TWI_CNTR_M_START);
     while (!I2cCheckFlag());
@@ -53,7 +53,7 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     sprintf(Text, "==> Start Sent, Status 0x%x\r\n", Temp);
     SerialPortWrite((uint8_t *)Text, strlen(Text));
 
-    // Send Address + Write CMD
+    /* Send Address + Write CMD */
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, chip_addr);
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_A_ACK);
     I2cClearFlag();
@@ -62,7 +62,7 @@ void I2cWrite(uint8_t chip_addr, uint8_t reg_addr, uint8_t* data, uint8_t len)
     sprintf(Text, "==> ADDR+WR Sent, Status 0x%x\r\n", Temp);
     SerialPortWrite((uint8_t *)Text, strlen(Text));
 
-    // Write Reg Address
+    /* Write Reg Address */
     WriteReg(TWI0_BASE, TWI_DATA_OFFSET, reg_addr);
     WriteReg(TWI0_BASE, TWI_CNTR_OFFSET, TWI_CNTR_BUS_EN | TWI_CNTR_A_ACK);
     I2cClearFlag();

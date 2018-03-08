@@ -1,49 +1,77 @@
-PROJ_NAME ?= h3_app
-
-SRCS = main.c startup.s \
-       Library/SerialPortLib/SerialPortLib.c
-
-CC=arm-linux-gnueabihf-gcc
-LD=arm-linux-gnueabihf-ld
-OBJCOPY=arm-linux-gnueabihf-objcopy
-
+# Temporary Makefile for compile allwinner H3 baremetak proj
+#
+PRJ_NAME ?= h3_app
+PRJ_DIR := $(shell pwd)
+LIB_DIR ?= $(PRJ_DIR)/..
 OBJDIR = build
+
+vpath %.c $(LIB_DIR)/Libraries/Periph
+
+SRCS = main.c syscall.c h3_startup.S
+		
+CC=arm-none-eabi-gcc
+LD=arm-none-eabi-ld
+OBJCOPY=arm-none-eabi-objcopy
+
 
 OBJS := $(SRCS:.c=.o)
 OBJS := $(OBJS:.s=.o)
+OBJS := $(OBJS:.S=.o)
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 
-LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PROJ_NAME).map -g -T h3.lds
-CFLAGS  = -g -Wall -Wno-missing-braces -std=c99 -IInclude -marm -shared
+PERIPH_LIB := y
+ifeq ($(PERIPH_LIB),y)
+include $(LIB_DIR)/Libraries/Libraries.mk
+OBJS += $(addprefix $(OBJDIR)/Libraries/,$(periph-y))
+CFLAGS += -I ${LIB_DIR}/Libraries/Include/
+endif
 
-all: $(OBJDIR)/$(PROJ_NAME).elf $(OBJDIR)/$(PROJ_NAME).hex $(OBJDIR)/$(PROJ_NAME).bin $(OBJDIR)/$(PROJ_NAME)_spl.bin
 
-$(OBJDIR)/$(PROJ_NAME)_spl.bin: $(OBJDIR)/$(PROJ_NAME).elf
-	cat u-boot-spl.bin $(OBJDIR)/$(PROJ_NAME).bin > $@
+# Cortex A7: -mfloat-abi=softfp -mfpu=vfpv4-d16 -mcpu=cortex-a7
+
+CFLAGS += -mfloat-abi=softfp -mfpu=vfpv4-d16 
+CFLAGS += -g -Wall -std=c11 -mcpu=cortex-a7 -marm
+
+LDFILE = h3_dram.ld
+LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections
+
+all: $(OBJDIR)/$(PRJ_NAME).elf $(OBJDIR)/$(PRJ_NAME).hex $(OBJDIR)/$(PRJ_NAME).bin
+
+$(OBJDIR)/$(PRJ_NAME)_spl.bin: $(OBJDIR)/$(PRJ_NAME).elf
+	@cat u-boot-spl.bin $(OBJDIR)/$(PRJ_NAME).bin > $@
 
 $(OBJDIR)/%.elf: $(OBJS)
-	#$(CC) -o $@ $^ $(LDFLAGS)
-	${LD} -T h3.lds -o $@ $^ -Map=$(OBJDIR)/$(PROJ_NAME).map
-	#${OBJCOPY} -I elf32-littlearm -O binary testapp testapp.bin
+	@echo "   [LD]  	$@"
+	@$(CC) -o $@ $^ $(LDFLAGS)
 
 %.hex: %.elf
-	$(OBJCOPY) -O ihex $^ $@
+	@echo "   [OBJCOPY]	$@"
+	@$(OBJCOPY) -O ihex $^ $@
 
 %.bin: %.elf
-	$(OBJCOPY) -O binary $^ $@
+	@echo "   [OBJCOPY]	$@"
+	@$(OBJCOPY) -O binary $^ $@
 
 $(OBJDIR)/%.o: %.c
-	mkdir -p $(dir $@)
-	$(CC) -c $(CFLAGS) -o $@ $^
+	@mkdir -p $(dir $@)
+	@echo "   [CC]     	$(subst $(LIB_DIR)/,,$^)"
+	@$(CC) -c $(CFLAGS) -o $@ $^
 
-$(OBJDIR)/%.o: %.s
-	$(CC) -c $(CFLAGS) -o $@ $^
+$(OBJDIR)/Libraries/Periph/%.o: %.c
+	@mkdir -p $(dir $@)
+	@echo "   [CC]     	$(subst $(LIB_DIR)/,,$^)"
+	@$(CC) -c $(CFLAGS) -o $@ $^
+
+$(OBJDIR)/%.o: %.S
+	@echo "   [AS]     	$(subst $(LIB_DIR)/,,$^)"
+	@$(CC) -c $(CFLAGS) -o $@ $^
 
 $(OBJDIR):
-	mkdir -p $@
+	@mkdir -p $@
 
-clean: 
-	rm -rf $(OBJDIR)/*.bin $(OBJDIR)/*
+clean:
+	@echo "   [RM]		build"
+	@rm -rf $(OBJDIR)
 
 # Dependdencies
-$(OBJDIR)/$(PROJ_NAME).elf: $(OBJS) | $(OBJDIR)
+$(OBJDIR)/$(PRJ_NAME).elf: $(OBJS) | $(OBJDIR)

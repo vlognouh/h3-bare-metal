@@ -18,15 +18,15 @@
 //------------------------------------------------------------------------------
 
 .macro led_on
-    ldr r0, =PACONF1
-    ldr r1, [r0]
-    and r1, r1, #~(6<<28)
-    str r1, [r0]
+    ldr r10, =PACONF1
+    ldr r11, [r10]
+    and r11, r11, #~(6<<28)
+    str r11, [r10]
 
-    ldr r0, =PADATA
-    ldr r1, [r0]
-    orr r1, r1, #(1<<15)
-    str r1, [r0]
+    ldr r10, =PADATA
+    ldr r11, [r10]
+    orr r11, r11, #(1<<10)
+    str r11, [r10]
 .endm
 
 .macro led2_on
@@ -42,15 +42,15 @@
 .endm
 
 .macro led_off
-    ldr r0, =PACONF1
-    ldr r1, [r0]
-    and r1, r1, #~(6<<28)
-    str r1, [r0]
+    ldr r10, =PACONF1
+    ldr r11, [r10]
+    and r11, r11, #~(6<<28)
+    str r11, [r10]
 
-    ldr r0, =PADATA
-    ldr r1, [r0]
-    and r1, r1, #~(1<<15)
-    str r1, [r0]
+    ldr r10, =PADATA
+    ldr r11, [r10]
+    and r11, r11, #~(1<<10)
+    str r11, [r10]
 .endm
 
 .macro  def_irq_handler handler_name
@@ -117,13 +117,15 @@ reset:
 
 #if 0
 	/* Enable NEON & VFP unit */
-	mrc p15, #0, r1, c1, c0, #2
-	orr r1, r1, #(0xf << 20)
-	mcr p15, #0, r1, c1, c0, #2
-	mov r1, #0
-	mcr p15, #0, r1, c7, c5, #4
+	mrc p15, 0, r0, c1, c0, 2
+	orr r0, r0, #(0xf << 20)
+	mcr p15, 0, r0, c1, c0, 2
 	mov r0, #0x40000000
-	fmxr fpexc, r0
+	vmsr fpexc, r0
+/*
+	mov r1, #0
+	mcr p15, 0, r1, c7, c5, 4
+*/	
 #endif
 
 	/* Cache init */
@@ -264,9 +266,53 @@ fiq_handler:
 
     .global	irq_handler
 irq_handler:
+	subs lr, lr, #4
+
+//	srsfd   sp!, #0x12
+
+	/* switch back to 	system mode */
+//	cps     #0x1f
+#if 0
+	/* save AAPCS reg */
+	push 	{r0-r12}
+
+	/* ensure stack is 8-byte aligned */
+	and     r1, sp, #4
+	sub     sp, sp, r1
+
+	/* store adjustment and lr */
+	push    {r1, lr}
+
+    //
+    ldr r12, =0x1c81184
+    mov r11, #(1<<18)
+    str r11, [r12]
     led_on
+
     bl test_ir
-    b .
+   	/* restore lr and unadjust stack */
+	pop		{r1, lr}
+    add		sp, sp, r1
+
+    /* restore AAPCs reg */
+    pop		{r0-r12}
+# endif
+push {r0-r12}
+push {lr}
+    //
+#if 0
+    ldr r12, =0x1c81184
+    mov r11, #(1<<18)
+    str r11, [r12]
+#endif
+    //    led_on
+    bl test_ir
+pop {lr}
+pop {r0-r12}
+    /* return */
+//    rfefd	sp!
+	movs pc, lr
+//    led_off
 //------------------------------------------------------------------------------
 // STACK LOCATIONS
 //------------------------------------------------------------------------------
