@@ -12,13 +12,13 @@
 
 #include "helper.h"
 
-#include "SerialPortLib.h"
-#include "TimerLib.h"
-#include "GpioLib.h"
-#include "CcuLib.h"
-#include "I2cLib.h"
-#include "SpiLib.h"
-#include "GicLib.h"
+#include "Periph/SerialPortLib.h"
+#include "Periph/TimerLib.h"
+#include "Periph/GpioLib.h"
+#include "Periph/CcuLib.h"
+#include "Periph/I2cLib.h"
+#include "Periph/SpiLib.h"
+#include "Periph/GicLib.h"
 
 
 /**

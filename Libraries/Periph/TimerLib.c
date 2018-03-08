@@ -6,11 +6,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "TimerLib.h"
-#include "SerialPortLib.h"
-#include "GpioLib.h"
-#include "GicLib.h"
-#include "helper.h"
+#include "Periph/TimerLib.h"
+#include "Periph/SerialPortLib.h"
+#include "Periph/GpioLib.h"
+#include "Periph/GicLib.h"
+#include "Periph/helper.h"
 
 void
 Timer0Init (

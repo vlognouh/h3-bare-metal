@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "helper.h"
-#include "I2cLib.h"
-#include "SerialPortLib.h"
-#include "CcuLib.h"
-#include "GpioLib.h"
+#include "Periph/I2cLib.h"
+#include "Periph/SerialPortLib.h"
+#include "Periph/CcuLib.h"
+#include "Periph/GpioLib.h"
 
 void I2cGenerateStart(void)
 {
