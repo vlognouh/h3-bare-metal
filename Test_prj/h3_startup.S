@@ -115,8 +115,7 @@ reset:
     orr	r0, r0, #0x53
 	msr	cpsr, r0
 
-#if 0
-	/* Enable NEON & VFP unit */
+	/* Enable VFP unit*/
 	mrc p15, 0, r0, c1, c0, 2
 	orr r0, r0, #(0xf << 20)
 	mcr p15, 0, r0, c1, c0, 2
@@ -126,7 +125,6 @@ reset:
 	mov r1, #0
 	mcr p15, 0, r1, c7, c5, 4
 */	
-#endif
 
 	/* Cache init */
 	mrc	p15, 0, r0, c0, c0, 0		/* read main ID register */
