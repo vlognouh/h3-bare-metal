@@ -31,6 +31,8 @@ int main(int argc, char const *argv[])
     uint8_t data[2];
     uint32_t i;
 
+    float fval;
+
     int *pa, *pb;
 
     // extern int end;
@@ -115,8 +117,12 @@ int main(int argc, char const *argv[])
     while (1)
     {
         i = ReadReg(TIMER_BASE, TMR0_CUR_VALUE_REG_OFFSET);
-        if (i % 10000 == 0)
+        fval = (float)i / 111;
+        if (i % 10000 < 10)
+        {
+            printf("////%f\r\n", fval);
             WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) ^ (1 << 10));
+        }
         // if (i = 0x55555)
         //     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
     }
