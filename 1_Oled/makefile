@@ -7,7 +7,7 @@ OBJDIR = build
 
 vpath %.c $(LIB_DIR)/Libraries/Periph
 
-SRCS = main.c syscall.c h3_startup.S
+SRCS = main.c syscall.c h3_startup.S SSD1306/SSD1306.c
 		
 CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld
@@ -31,6 +31,8 @@ endif
 
 CFLAGS += -mfloat-abi=softfp -mfpu=vfpv4-d16 
 CFLAGS += -g -Wall -std=c11 -mcpu=cortex-a7 -marm
+CFLAGS += -I ./SSD1306
+
 
 LDFILE = h3_dram.ld
 LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections

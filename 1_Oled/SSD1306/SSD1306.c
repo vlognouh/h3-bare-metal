@@ -1,33 +1,28 @@
 //-----------------
+#include <stdint.h>
 #include "SSD1306.h"
 #include "font_oled.h"
+#include "Periph/SpiLib.h"
 
-#define Set_DC() GPIO_SetBits(GPIOD, GPIO_Pin_11)
-#define Clear_DC() GPIO_ResetBits(GPIOD, GPIO_Pin_11)
+#define Set_DC() CE_High()
+#define Clear_DC() CE_Low()
 
-#define Set_RST() GPIO_SetBits(GPIOD, GPIO_Pin_9)
-#define Clear_RST() GPIO_ResetBits(GPIOD, GPIO_Pin_9)
+#define Set_RST() SS0_High()
+#define Clear_RST() SS0_Low()
 
 /* Private typedef -----------------------------------------------------------*/
-GPIO_InitTypeDef  GPIO_InitStructure;
-SPI_InitTypeDef   SPI_InitStructure;
-
 void write_data(uint8_t data)
 {
 		Set_DC();
 		/* Send the byte */
-		SPI_I2S_SendData(SPI2, data);
-		/* Wait until the transmit done */
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+		Transfer_One(data);
 }
 
 void write_command(uint8_t cmd)
 {
 		Clear_DC();
 		/* Send the byte */
-		SPI_I2S_SendData(SPI2, cmd);
-		/* Wait until the transmit done */
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_BSY) == SET);
+		Transfer_One(cmd);
 }
 
 void OLED_SetPos(uint8_t ucIdxX, uint8_t ucIdxY)
@@ -197,60 +192,7 @@ void SetNop(void)
 
 void IO_Init(void)
 {
-	/* GPIOB Periph clock enable */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-	
-	/* GPIOD Periph clock enable */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 
-	/* SPI2 Periph clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-	
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_SPI2);	
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource15, GPIO_AF_SPI2);
-	
-	GPIO_InitStructure.GPIO_Pin = SDA_PIN | SCL_PIN; 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(SPI_GPIO, &GPIO_InitStructure);
-	
-		/* Configure DC pin */
-	GPIO_InitStructure.GPIO_Pin = DC_PIN;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(DC_GPIO, &GPIO_InitStructure);
-
-	/* Configure RST pin */
-	GPIO_InitStructure.GPIO_Pin = RST_PIN;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_Init(RST_GPIO, &GPIO_InitStructure);
-	
-	/* SPI2 Config */
-	SPI_I2S_DeInit(SPI2);
-	SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
-	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
-	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
-	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
-	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-	SPI_InitStructure.SPI_CRCPolynomial = 7;
-	SPI_Init(SPI2, &SPI_InitStructure);
-
-	SPI_CalculateCRC(SPI2, DISABLE);
-
-	/* SPI enable */
-	SPI_Cmd(SPI2, ENABLE);
-	
-	/* drain SPI */
-	while(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
 }
 
 /*****************************************************************************
@@ -283,7 +225,7 @@ void OLED_Init(void)
     SetVCOMH(0x40);           // Set VCOM Deselect Level
 
     SetDisplayOnOff(0x01);    // Display On (0x00/0x01)	@
-		
+    
     OLED_Fill(0xff);          // Clear, 0xff = fill full
 } 
  

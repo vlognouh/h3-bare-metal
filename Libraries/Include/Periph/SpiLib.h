@@ -37,11 +37,13 @@
 #define SPI_RXDATA     0x300
 
 void SPI0_Init(void);
+void     CE_Low(void);
+void     CE_High(void);
 void     SS0_Low(void);
 void     SS0_High(void);
 uint8_t SPI0_Read_Byte(uint8_t Address);
 uint8_t SPI0_Read_Reg(uint8_t Reg);
-
+void delay(void);
 uint8_t Transfer_One(uint8_t Addr);
 void Dummy_Byte(void);
 #endif /* __SPILIB_H__*/

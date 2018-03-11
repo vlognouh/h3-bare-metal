@@ -18,23 +18,23 @@ void SPI0_HW_Init(void)
     Temp = ReadReg(GPIO_BASE, PC_CONFIG0_OFFSET);
     WriteReg(GPIO_BASE, PC_CONFIG0_OFFSET, Temp & ~(6 << 12) & ~(4 << 8) & ~(4 << 4) & ~4);
 
-    // Setup PA2 as CE pin
+    // Setup PA7 as CE pin
     Temp = ReadReg(GPIO_BASE, PA_CONFIG0_OFFSET);
-    WriteReg(GPIO_BASE, PA_CONFIG0_OFFSET, Temp & ~(6 << 8));
+    WriteReg(GPIO_BASE, PA_CONFIG0_OFFSET, Temp & ~(6 << 28));
 }
 
 void CE_High(void)
 {
-    // PA2
+    // PA7
     Temp = ReadReg(GPIO_BASE, PA_DATA_OFFSET);
-    WriteReg(GPIO_BASE, PA_DATA_OFFSET, Temp | 1 << 2);
+    WriteReg(GPIO_BASE, PA_DATA_OFFSET, Temp | 1 << 7);
 }
 
 void CE_Low(void)
 {
-    // PA2
+    // PA7
     Temp = ReadReg(GPIO_BASE, PA_DATA_OFFSET);
-    WriteReg(GPIO_BASE, PA_DATA_OFFSET, Temp & ~(1 << 2));
+    WriteReg(GPIO_BASE, PA_DATA_OFFSET, Temp & ~(1 << 7));
 }
 
 void SS0_High(void)
@@ -63,8 +63,6 @@ void delay(void)
 
 void Dummy_Byte(void)
 {
-    SS0_High();
-
     // Clear all pending interrupt
     WriteReg(SPI0_BASE, SPI_INT_STA, ~0);
 
@@ -112,12 +110,11 @@ void Dummy_Byte(void)
     Data = ReadByte(SPI0_BASE, SPI_RXDATA);
 
     //
-    WriteReg(SPI0_BASE, SPI_INT_CTL, 0);
+    // WriteReg(SPI0_BASE, SPI_INT_CTL, 0);
 }
 
 uint8_t Transfer_One(uint8_t Addr)
 {
-    SS0_Low();
     // Clear all pending interrupt
     WriteReg(SPI0_BASE, SPI_INT_STA, ~0);
 
@@ -145,20 +142,20 @@ uint8_t Transfer_One(uint8_t Addr)
     WriteReg(SPI0_BASE, SPI_FIFO_STA, Temp | 1 << 31);
 
     // Setup counter
-    WriteReg(SPI0_BASE, SPI_BURST_CNT, 2);
-    WriteReg(SPI0_BASE, SPI_XMIT_CNT, 2);
-    WriteReg(SPI0_BASE, SPI_BURST_CTL_CNT, 2);
+    WriteReg(SPI0_BASE, SPI_BURST_CNT, 1);
+    WriteReg(SPI0_BASE, SPI_XMIT_CNT, 1);
+    WriteReg(SPI0_BASE, SPI_BURST_CTL_CNT, 1);
 
     // Fill FIFO
     WriteByte(SPI0_BASE, SPI_TXDATA, Addr);
-    WriteByte(SPI0_BASE, SPI_TXDATA, 0x00);
+    //WriteByte(SPI0_BASE, SPI_TXDATA, 0x00);
 
     // Count TX FIFO
     Temp = ReadReg(SPI0_BASE, SPI_FIFO_STA)>>16 & 0xFF;
-    printf(Text, "--- TX COUNT= 0x%x\r\n", Temp);
+    // printf("--- TX COUNT= 0x%lx\r\n", Temp);
 
     // Enable interrupt
-    WriteReg(SPI0_BASE, SPI_INT_CTL, 1 << 12);
+    // WriteReg(SPI0_BASE, SPI_INT_CTL, 1 << 12);
 
     // Start Transfer
     Temp = ReadReg(SPI0_BASE, SPI_TFR_CTL);
@@ -171,19 +168,19 @@ uint8_t Transfer_One(uint8_t Addr)
     WriteReg(SPI0_BASE, SPI_INT_STA, 1 << 12);
 
     // Count RX FIFO
-    Temp = ReadByte(SPI0_BASE, SPI_FIFO_STA);
-    printf("--- RX COUNT= 0x%lx\r\n", Temp);
+    // Temp = ReadByte(SPI0_BASE, SPI_FIFO_STA);
+    // printf("--- RX COUNT= 0x%lx\r\n", Temp);
 
-    // Read RX FIFO
+    // // Read RX FIFO
+    // Data = ReadByte(SPI0_BASE, SPI_RXDATA);
+    // printf("--- RX DATA= 0x%x\r\n", Data);
+
     Data = ReadByte(SPI0_BASE, SPI_RXDATA);
-    printf("--- RX DATA= 0x%x\r\n", Data);
 
-    Data = ReadByte(SPI0_BASE, SPI_RXDATA);
+    // //
+    // WriteReg(SPI0_BASE, SPI_INT_CTL, 0);
 
-    //
-    WriteReg(SPI0_BASE, SPI_INT_CTL, 0);
-
-    SS0_High();
+//    SS0_High();
     return Data;
 }
 

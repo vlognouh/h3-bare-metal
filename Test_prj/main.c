@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
     /* clear PL10 */
     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
 
-    printf("Hello Everyone 28  !!\r\n");
+    printf("Hello Everyone 29  !!\r\n");
 
     pa = malloc(200);
     pb = malloc(100);
@@ -96,7 +96,7 @@ int main(int argc, char const *argv[])
     I2cRead(0xD0, 0x6B, data, 1);
     printf("MPU6050 Addr:0x6B = %d\r\n", data[0]);
 #endif
-#if 0
+#if 1
 ////// SPI
     SPI0_Init();
     Dummy_Byte(); // => to correct SPI_SCK polarity
@@ -116,15 +116,7 @@ int main(int argc, char const *argv[])
 #endif
     while (1)
     {
-        i = ReadReg(TIMER_BASE, TMR0_CUR_VALUE_REG_OFFSET);
-        fval = (float)i / 111;
-        if (i % 10000 < 10)
-        {
-            printf("////%f\r\n", fval);
-            WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) ^ (1 << 10));
-        }
-        // if (i = 0x55555)
-        //     WriteReg(PL_BASE, PL_DATA_OFFSET, ReadReg(PL_BASE, PL_DATA_OFFSET) & ~(1 << 10));
+
     }
     return 0;
 }

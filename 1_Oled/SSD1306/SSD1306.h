@@ -6,8 +6,6 @@ SSD1306 Driver OOLED 128x64
 #ifndef __OOLED_H__
 #define __OOLED_H__
 
-#include "stm32f4xx.h"
-
 #define OLED_IMAGE_WHITE       1
 #define OLED_IMAGE_BLACK       0
 
@@ -15,19 +13,6 @@ SSD1306 Driver OOLED 128x64
 #define OLED_MAX_COLUMN_NUM  128
 
 //-----------------------------------
-#define SPI_SD SPI2;
-#define SPI_CLK RCC_APB1Periph_SPI2;
-
-#define SPI_GPIO GPIOB
-#define SCL_PIN GPIO_Pin_13 	//SPI2 SCK
-#define SDA_PIN	GPIO_Pin_15		//SPI2_MOSI
-
-#define RST_GPIO GPIOD			
-#define RST_PIN GPIO_Pin_9
-
-#define DC_GPIO GPIOD
-#define DC_PIN GPIO_Pin_11
-
 #define SSD1306_LCDWIDTH                  128
 #define SSD1306_LCDHEIGHT                 64
 
