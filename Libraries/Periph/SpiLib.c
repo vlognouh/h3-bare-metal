@@ -119,8 +119,8 @@ uint8_t Transfer_One(uint8_t Addr)
     SPI0->SPI_TXDATA = Addr;
 
     // Count TX FIFO
-    Temp = SPI0->SPI_FIFO_STA >> 16 & 0xFF;
-    printf("--- TX COUNT= 0x%lx\r\n", Temp);
+//    Temp = SPI0->SPI_FIFO_STA >> 16 & 0xFF;
+//    printf("--- TX COUNT= 0x%lx\r\n", Temp);
 
     // Start Transfer
     SPI0->SPI_TCR |= 1 << 31;
@@ -132,8 +132,8 @@ uint8_t Transfer_One(uint8_t Addr)
     SPI0->SPI_INT_STA = 1 << 12;
 
     // Count RX FIFO
-    Temp = SPI0->SPI_FIFO_STA;
-    printf("--- RX COUNT= 0x%lx\r\n", Temp);
+//    Temp = SPI0->SPI_FIFO_STA;
+//    printf("--- RX COUNT= 0x%lx\r\n", Temp);
 
     Data = SPI0->SPI_RXDATA;
 

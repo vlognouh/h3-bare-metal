@@ -45,9 +45,7 @@ int main(int argc, char const *argv[])
 
 ////// SPI
     SPI0_Init();
-    
 
-   // Dummy_Byte(); // => to correct SPI_SCK polarity
     OLED_Init();
     printf("Oled Test !!\r\n");
     OLED_P8x16Str(0x00, 0x01, "TESTING ngon");
