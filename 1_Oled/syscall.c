@@ -45,6 +45,7 @@ int _write (int file,
             int nbytes)
 {
     SerialPortWrite((uint8_t *)buf, nbytes);
+    SerialPortWrite("\r", 1);
     return nbytes;
 } /* _write () */
 
