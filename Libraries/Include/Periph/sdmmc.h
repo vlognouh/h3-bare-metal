@@ -53,6 +53,9 @@ typedef struct {
 #define SDMMC1 ((sdmmc_reg_t *)(0x01C10000))
 #define SDMMC2 ((sdmmc_reg_t *)(0x01C11000))
 
+#define MMC_DATA_READ       1
+#define MMC_DATA_WRITE      2
+
 #define MMC_CMD_GO_IDLE_STATE       0
 #define MMC_CMD_SEND_OP_COND        1
 #define MMC_CMD_ALL_SEND_CID        2
@@ -119,7 +122,7 @@ typedef struct {
 #define SUNXI_MMC_CMD_RESP_EXPIRE   (0x1 << 6)
 #define SUNXI_MMC_CMD_LONG_RESPONSE (0x1 << 7)
 #define SUNXI_MMC_CMD_CHK_RESPONSE_CRC  (0x1 << 8)
-#define SUNXI_MMC_CMD_DATA_EXPIRE   (0x1 << 9)
+#define SUNXI_MMC_CMD_WITH_DATA   (0x1 << 9)
 #define SUNXI_MMC_CMD_WRITE     (0x1 << 10)
 #define SUNXI_MMC_CMD_AUTO_STOP     (0x1 << 12)
 #define SUNXI_MMC_CMD_WAIT_PRE_OVER (0x1 << 13)
@@ -161,6 +164,15 @@ typedef struct {
      SUNXI_MMC_RINT_DATA_OVER |     \
      SUNXI_MMC_RINT_COMMAND_DONE |      \
      SUNXI_MMC_RINT_VOLTAGE_CHANGE_DONE)
+
+#define SUNXI_MMC_GCTRL_SOFT_RESET  (0x1 << 0)
+#define SUNXI_MMC_GCTRL_FIFO_RESET  (0x1 << 1)
+#define SUNXI_MMC_GCTRL_DMA_RESET   (0x1 << 2)
+#define SUNXI_MMC_GCTRL_RESET       (SUNXI_MMC_GCTRL_SOFT_RESET|\
+                     SUNXI_MMC_GCTRL_FIFO_RESET|\
+                     SUNXI_MMC_GCTRL_DMA_RESET)
+#define SUNXI_MMC_GCTRL_DMA_ENABLE  (0x1 << 5)
+#define SUNXI_MMC_GCTRL_ACCESS_BY_AHB   (0x1 << 31)
 
 #define SUNXI_MMC_STATUS_RXWL_FLAG      (0x1 << 0)
 #define SUNXI_MMC_STATUS_TXWL_FLAG      (0x1 << 1)
