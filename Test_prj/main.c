@@ -20,6 +20,7 @@
 #include "Periph/SpiLib.h"
 #include "Periph/GicLib.h"
 
+extern void initialise_monitor_handles(void);
 
 /**
  * MAIN FUNC
@@ -34,6 +35,8 @@ int main(int argc, char const *argv[])
     float fval;
 
     int *pa, *pb;
+    
+    initialise_monitor_handles();
 
     // extern int end;
     // extern int HeapLimit;
@@ -66,7 +69,7 @@ int main(int argc, char const *argv[])
     printf("==== printf Worked: 0x%p\r\n", pa);
     printf("==== printf Worked: 0x%p\r\n", pb);
 
-    GicInit();
+    // GicInit();
 
     free(pa);
 //    WriteReg(CCU_BASE, PLL_PERIPH0, 1<<31 | 5<<8 | 2<<4 | 2);

@@ -7,7 +7,7 @@ OBJDIR = build
 
 vpath %.c $(LIB_DIR)/Libraries/Periph
 
-SRCS = main.c syscall.c h3_startup.S
+SRCS = main.c h3_startup.S
 		
 CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld
@@ -33,7 +33,7 @@ CFLAGS += -mfloat-abi=softfp -mfpu=vfpv4-d16
 CFLAGS += -g -Wall -std=c11 -mcpu=cortex-a7 -marm
 
 LDFILE = h3_dram.ld
-LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections
+LDFLAGS = -Wl,-Map,$(OBJDIR)/$(PRJ_NAME).map -g -T $(LDFILE) -nostartfiles -Wl,--gc-sections  -specs=rdimon.specs
 
 all: $(OBJDIR)/$(PRJ_NAME).elf $(OBJDIR)/$(PRJ_NAME).hex $(OBJDIR)/$(PRJ_NAME).bin
 
