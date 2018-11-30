@@ -121,7 +121,7 @@ uint8_t send_cmd(struct mmc_cmd *cmd, struct mmc_data *data)
 
             if (reading)
             {
-                printf("%d\n", i);
+                // printf("%d\n", i);
                 buff[i] = SDMMC0->SD_FIFO;
             }
             else
@@ -342,7 +342,10 @@ retry:
         return;
     }
 
-    printf("%d\n", ssr[0]);
+    for (int i = 0; i < 16; ++i)
+    {
+        printf("-> %d\n", ssr[i]);
+    }
 
 
 //----
@@ -362,10 +365,10 @@ retry:
 
     cmd.cmdidx = MMC_CMD_READ_SINGLE_BLOCK;
     cmd.resp_type = MMC_RSP_R1;
-    cmd.cmdarg = 1024;
+    cmd.cmdarg = 8192;
 
     uint32_t dst[256];
-    data.dest = dst;
+    data.dest = (char *)dst;
     data.blocks = 1;
     data.blocksize = 512;
     data.flags = MMC_DATA_READ;
@@ -376,4 +379,8 @@ retry:
         return;
     }
 
+    for (int i = 0; i < 128; ++i)
+    {
+        printf("-> 0x%08x\n", dst[i]);
+    }
 }
