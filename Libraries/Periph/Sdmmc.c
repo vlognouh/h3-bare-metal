@@ -151,7 +151,7 @@ void SD_Test(void)
 {
     struct mmc_cmd cmd;
     struct mmc_data data;
-    uint8_t addr;
+    uint16_t addr;
 
     printf("----------------------------------\n");
 
